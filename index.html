@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AKTU B.Tech Syllabus Tracker | 3rd Year (CSE / CS / CE)</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="container">
+    <!-- Top Header -->
+    <header class="header">
+      <div class="header-top">
+        <div class="brand-info">
+          <div class="brand-logo">AKTU</div>
+          <div class="brand-title">
+            <h1>B.Tech Syllabus & Revision Tracker</h1>
+            <p>Dr. A.P.J. Abdul Kalam Technical University • CSE / CS / Computer Engg (NEP2020)</p>
+          </div>
+        </div>
+
+        <div class="header-actions">
+          <button class="btn" id="themeToggleBtn" title="Toggle Dark/Light Mode">☀️ Light</button>
+          <button class="btn" id="printBtn" title="Print this syllabus checklist">🖨️ Print Sheet</button>
+          <button class="btn" id="exportBtn" title="Export progress to JSON file">💾 Export Backup</button>
+          <button class="btn" id="importBtn" title="Import progress from JSON file">📂 Restore</button>
+          <input type="file" id="importFileInput" accept=".json" style="display:none;">
+          <button class="btn btn-danger" id="resetBtn" title="Reset all topic checkboxes">🔄 Reset</button>
+        </div>
+      </div>
+
+      <!-- Semester Toggle -->
+      <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:12px;">
+        <div class="sem-switcher">
+          <button class="sem-btn active" id="sem5TabBtn">Semester V (Odd)</button>
+          <button class="sem-btn" id="sem6TabBtn">Semester VI (Even)</button>
+        </div>
+        <div style="font-size:0.8rem; color:var(--text-muted);">
+          ⚡ Progress saves automatically in your browser storage
+        </div>
+      </div>
+    </header>
+
+    <!-- Top Stats Row -->
+    <div class="stats-grid">
+      <!-- Overall Progress -->
+      <div class="stat-card">
+        <div class="stat-icon-wrapper" style="background: rgba(59, 130, 246, 0.15); color: #3b82f6;">
+          📊
+        </div>
+        <div class="stat-info">
+          <div class="stat-label">Semester Progress</div>
+          <div class="stat-val" id="statPercent">0%</div>
+          <div class="progress-bar-container">
+            <div class="progress-bar-fill" id="statProgressFill" style="width: 0%;"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Completed Topics -->
+      <div class="stat-card">
+        <div class="stat-icon-wrapper" style="background: rgba(16, 185, 129, 0.15); color: #10b981;">
+          ✅
+        </div>
+        <div class="stat-info">
+          <div class="stat-label">Topics Mastered</div>
+          <div class="stat-val" id="statCompletedTopics">0</div>
+          <div class="stat-sub" id="statRemainingTopics">0 left</div>
+        </div>
+      </div>
+
+      <!-- Total Syllabus Topics -->
+      <div class="stat-card">
+        <div class="stat-icon-wrapper" style="background: rgba(139, 92, 246, 0.15); color: #8b5cf6;">
+          📚
+        </div>
+        <div class="stat-info">
+          <div class="stat-label">Total Syllabus Topics</div>
+          <div class="stat-val" id="statTotalTopics">0</div>
+          <div class="stat-sub">Units & Practical Labs</div>
+        </div>
+      </div>
+
+      <!-- Marked for Revision -->
+      <div class="stat-card">
+        <div class="stat-icon-wrapper" style="background: rgba(245, 158, 11, 0.15); color: #f59e0b;">
+          ⭐
+        </div>
+        <div class="stat-info">
+          <div class="stat-label">Flagged for Revision</div>
+          <div class="stat-val" id="statRevisionTopics">0</div>
+          <div class="stat-sub">High-priority exam review</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Elective Selection & Exam Target Bar -->
+    <div class="config-bar">
+      <div class="elective-pickers" id="electivePickersContainer">
+        <!-- Injected via app.js -->
+      </div>
+
+      <div class="exam-planner">
+        <span style="font-size:0.85rem; font-weight:700; color:var(--text-secondary);">🎯 Exam Target:</span>
+        <input type="date" id="examDateInput" title="Set target date for Sessional / University Exam">
+        <span class="exam-countdown-tag" id="examCountdownTag">Set Exam Date</span>
+      </div>
+    </div>
+
+    <!-- Filter & Search Toolbar -->
+    <div class="toolbar">
+      <div class="search-box">
+        <span class="search-icon">🔍</span>
+        <input type="text" id="syllabusSearchInput" placeholder="Search topic (e.g. Normalization, Dijkstra, Lex, B-Tree, TCP)...">
+      </div>
+
+      <div class="filter-pills">
+        <button class="filter-pill active" data-filter="all">All Topics</button>
+        <button class="filter-pill" data-filter="pending">⏳ To Do</button>
+        <button class="filter-pill" data-filter="in_progress">⚡ In Progress</button>
+        <button class="filter-pill" data-filter="completed">✅ Mastered</button>
+        <button class="filter-pill revision-filter" data-filter="revision">⭐ Exam Revision Only</button>
+      </div>
+
+      <div style="display:flex; gap:8px;">
+        <button class="btn" id="expandAllBtn" style="font-size:0.78rem;">▼ Expand All</button>
+        <button class="btn" id="collapseAllBtn" style="font-size:0.78rem;">▲ Collapse All</button>
+      </div>
+    </div>
+
+    <!-- Subject Tabs -->
+    <nav class="subject-nav-tabs" id="subjectNavTabs">
+      <!-- Injected via app.js -->
+    </nav>
+
+    <!-- Main Syllabus Cards Container -->
+    <main id="subjectsContainer">
+      <!-- Dynamic Subject Cards injected here -->
+    </main>
+  </div>
+
+  <!-- Topic Notes Modal -->
+  <div class="modal-overlay" id="notesModal">
+    <div class="modal-card">
+      <div class="modal-header">
+        <h3>📝 Topic Study Notes & Key Formulas</h3>
+        <button class="modal-close-btn" id="modalCloseBtn">&times;</button>
+      </div>
+      <div class="modal-topic-title" id="modalTopicTitle">Topic Title</div>
+      <textarea class="modal-textarea" id="modalNoteText" placeholder="Write key formulas, important theorem definitions, YouTube video timestamps, or quick revision reminders for this topic..."></textarea>
+      <div class="modal-footer">
+        <button class="btn" id="modalCancelBtn">Cancel</button>
+        <button class="btn btn-primary" id="modalSaveBtn">Save Note</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast Container -->
+  <div class="toast-container" id="toastContainer"></div>
+
+  <!-- Scripts -->
+  <script src="data.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
